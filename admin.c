@@ -25,7 +25,6 @@ typedef struct {
     int no;
 } Flight;
 Flight availableFlights[MAX_FLIGHTS];
-//int islogin = 0, isadmin = 0, count = 0,availableFlightCount = 0;
 char usernames[MAX_USERS][MAX_NAME_LEN];
 char passwords[MAX_USERS][MAX_PASSWORD_LEN];
 char dob[MAX_USERS][MAX_DOB_LEN];
@@ -61,7 +60,7 @@ void adminmenu() {
     		   modify_flights();
                break;
         case 4:system("cls");
-		       deleteExpiredFlights(); 
+		   deleteExpiredFlights(); 
     		   view_all_bookings();
                 break;
         case 5: 
@@ -100,11 +99,9 @@ void addFlight() {
     int current_day, current_month, current_year, current_hour, current_minute;
     getCurrentDate(&current_day, &current_month, &current_year);
     getCurrentTime(&current_hour, &current_minute);
-
     printf("Enter Flight Number: ");
     gets(newFlight.flightNumber);
     fflush(stdin);
-
     FILE *readFile = fopen(FL, "r");
     if (readFile != NULL) {
         while (fgets(line, sizeof(line), readFile) != NULL) {
@@ -120,16 +117,12 @@ void addFlight() {
         }
         fclose(readFile);
     }
-
     printf("Enter Origin: ");
     gets(newFlight.origin);
     fflush(stdin);
-    
     printf("Enter Destination: ");
     gets(newFlight.destination);
     fflush(stdin);
-
-    // Validate and input departure date
     int day, month, year;
     printf("Enter Departure Date (dd-mm-yyyy): ");
     gets(newFlight.travelDate);
@@ -176,7 +169,6 @@ void deleteFlight() {
                availableFlights[i].destination, availableFlights[i].travelDate, availableFlights[i].departureTime);
     }
     printf("\n");
-
     int serialNumber;
     printf("Enter The Serial Number Of Flight: ");
     scanf("%d", &serialNumber);
@@ -201,7 +193,6 @@ void deleteFlight() {
         printf("Could not open flight file for writing.\n");
         return;
     }
-
     for (int i = 0; i < updatedFlightCount; i++) {
         fprintf(file, "%d,%s,%s,%s,%s,%s\n",
                 updatedFlights[i].no, updatedFlights[i].flightNumber,
@@ -231,7 +222,6 @@ void deleteFlight() {
     system("pause");
     system("cls");
 }
-
 void modify_flights() {
     loadAvailableFlights();
     if (availableFlightCount == 0) {
@@ -383,33 +373,29 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
     }
 }
 void view_all_bookings() {
-    FILE *file = fopen("user_bookings.txt", "r"); // Open the file in read mode
+    FILE *file = fopen("user_bookings.txt", "r"); 
     if (file == NULL) {
         printf("NO BOOKINGS CURRENTLY\n");
         return;
     }
 
-    char line[256]; // Buffer to hold each line
+    char line[256]; 
     printf("\t\t----------------ALL BOOKINGS---------------------------\n");
-    
-    // Read each line
     while (fgets(line, sizeof(line), file)) {
-        // Check if the line is empty or contains only whitespace
         int isBlank = 1;
         for (int i = 0; line[i] != '\0'; i++) {
             if (!isspace(line[i])) {
-                isBlank = 0; // If there's a non-space character, it's not blank
+                isBlank = 0; 
                 break;
             }
         }
-
         if (isBlank) {
             continue; 
         }
         printf("%s", line);
     }
 
-    fclose(file); // Close the file
+    fclose(file); 
     system("pause");
     system("cls");
 }
