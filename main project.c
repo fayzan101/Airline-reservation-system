@@ -6,52 +6,15 @@
 #include "validation.c"
 #include "registration.c"
 #include "admin.c"
-//#include  "user.c"
 
-#define MAX_NAME_LEN 20
-#define MAX_PASSWORD_LEN 15
-#define MAX_USERS 7
-#define MAX_DOB_LEN 10
-#define MAX_NO_LEN 13
-#define MAX_GENDER_LEN 6
-#define MAX_EMAIL_LEN 25
-#define ADMIN_PASSWORD "1234"
-#define ADMIN_NAME "admin"
 #define MAX_FLIGHTS 100
 #define MAX_BOOKINGS 100
 
 #define F "user_info.txt"
 #define FL "flight.txt"
 #define UB "user_bookings.txt"
-
-//int islogin = 0, isadmin = 0, count = 0,availableFlightCount = 0;
-char usernames[MAX_USERS][MAX_NAME_LEN];
-char passwords[MAX_USERS][MAX_PASSWORD_LEN];
-char dob[MAX_USERS][MAX_DOB_LEN];
-char phone[MAX_USERS][MAX_NO_LEN];
-char gender[MAX_USERS][MAX_GENDER_LEN];
-char email[MAX_USERS][MAX_EMAIL_LEN];
-char user_flights[MAX_USERS][MAX_FLIGHTS];
-char currentUser[MAX_NAME_LEN];
-int travelFrequency; 
-char status[15];  
-int birth_day[MAX_USERS];
-int birth_month[MAX_USERS];
-int birth_year[MAX_USERS];
-
-//functions for login and registration
-void loadAvailableFlights();
-void register_user();
-void login_user(char name[MAX_NAME_LEN], char password[MAX_PASSWORD_LEN]);
-void login_admin(char name[MAX_NAME_LEN], char password[MAX_PASSWORD_LEN]);
-void forgot_password(char name[MAX_NAME_LEN],char Email[MAX_EMAIL_LEN]);
-//void saveusers();
-//void loadusers();
-
-//functions for user menu
 void usermenu();
 void userdetails();
-int calculateAge(int birth_day, int birth_month, int birth_year, int current_day, int current_month, int current_year);
 void bookFlight();
 void displayAvailableFlights();
 void view_user_bookings();
@@ -59,15 +22,8 @@ void modifyBookings();
 void cancelBooking();
 void saveUser_Flights(char *username, char *flightNumber, char *origin, char *destination,
 char *travelDate, char *departureTime, char *travelClass,int *ticketCount);
-void loadUser_Flights(char *username);
-
-//functions for admin menu
 void deleteExpiredFlights();
 void deleteExpiredBookings();
-void update_user_bookings(const char *flightNumber, const char *newDate, const char *newTime);
-const char* getUserStatus(int age, int travelFrequency);
-const char* getUserPerks(const char* status);
-int calculateTravelFrequency(const char* username);
 int main() {
     char choice;
     loadusers();
@@ -272,7 +228,7 @@ void saveUser_Flights(char *username, char *flightNumber, char *origin, char *de
         return;
     }
 
-    // Write the booking details with a single newline at the end
+//     Write the booking details with a single newline at the end
     fprintf(file, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n", 
             username, flightNumber, origin, destination, travelDate, departureTime, travelClass, *ticketCount);
 
