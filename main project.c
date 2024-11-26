@@ -39,16 +39,6 @@ int birth_day[MAX_USERS];
 int birth_month[MAX_USERS];
 int birth_year[MAX_USERS];
 
-//typedef struct {
-//    char flightNumber[20];
-//    char origin[50];
-//    char destination[50];
-//    char travelDate[20];
-//    char departureTime[20];
-//    int no;
-//} Flight;
-//Flight availableFlights[MAX_FLIGHTS];
-
 //functions for login and registration
 void loadAvailableFlights();
 void register_user();
@@ -72,13 +62,6 @@ char *travelDate, char *departureTime, char *travelClass,int *ticketCount);
 void loadUser_Flights(char *username);
 
 //functions for admin menu
-void adminmenu();
-void addFlight();
-void deleteFlight();
-void userdetails();
-void view_all_bookings();
-void searchbookings();
-void modify_flights();
 void deleteExpiredFlights();
 void deleteExpiredBookings();
 void update_user_bookings(const char *flightNumber, const char *newDate, const char *newTime);
