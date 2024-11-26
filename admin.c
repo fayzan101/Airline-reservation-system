@@ -2,42 +2,13 @@
 #include <time.h>
 #include<string.h>
 #include<stdlib.h>
-#define MAX_NAME_LEN 20
-#define MAX_PASSWORD_LEN 15
-#define MAX_USERS 7
-#define MAX_DOB_LEN 10
-#define MAX_NO_LEN 13
-#define MAX_GENDER_LEN 6
-#define MAX_EMAIL_LEN 25
-#define ADMIN_PASSWORD "1234"
-#define ADMIN_NAME "admin"
+
 #define MAX_FLIGHTS 100
 #define MAX_BOOKINGS 10
 #define F "user_info.txt"
 #define FL "flight.txt"
 #define UB "user_bookings.txt"
-typedef struct {
-    char flightNumber[20];
-    char origin[50];
-    char destination[50];
-    char travelDate[20];
-    char departureTime[20];
-    int no;
-} Flight;
-Flight availableFlights[MAX_FLIGHTS];
-char usernames[MAX_USERS][MAX_NAME_LEN];
-char passwords[MAX_USERS][MAX_PASSWORD_LEN];
-char dob[MAX_USERS][MAX_DOB_LEN];
-char phone[MAX_USERS][MAX_NO_LEN];
-char gender[MAX_USERS][MAX_GENDER_LEN];
-char email[MAX_USERS][MAX_EMAIL_LEN];
-char user_flights[MAX_USERS][MAX_FLIGHTS];
-char currentUser[MAX_NAME_LEN];
-int travelFrequency; 
-char status[15];  
-int birth_day[MAX_USERS];
-int birth_month[MAX_USERS];
-int birth_year[MAX_USERS];
+
 void adminmenu() {
      int admin_choice;
     printf("\t\t------------ADMIN MENU------------------\n");
@@ -295,7 +266,9 @@ void modify_flights() {
 
             fprintf(tempFile, "%d,%s,%s,%s,%s,%s\n", flightNumField, flightNum, origin, destination, travelDate, departureTime);
         } else {
-            fputs(line, tempFile);
+        	
+            fprintf(tempFile, "%d,%s,%s,%s,%s,%s\n", flightNumField, flightNum, origin, destination, travelDate, departureTime);
+            
         }
     }
     fclose(file);
