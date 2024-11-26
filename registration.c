@@ -16,6 +16,17 @@
 #define F "user_info.txt"
 #define FL "flight.txt"
 #define UB "user_bookings.txt"
+typedef struct {
+    char flightNumber[20];
+    char origin[50];
+    char destination[50];
+    char travelDate[20];
+    char departureTime[20];
+    int no;
+} Flight;
+Flight availableFlights[MAX_FLIGHTS];
+void saveusers();
+void adminmenu();
 int islogin = 0, isadmin = 0, count = 0,availableFlightCount = 0;
 char usernames[MAX_USERS][MAX_NAME_LEN];
 char passwords[MAX_USERS][MAX_PASSWORD_LEN];
@@ -30,8 +41,10 @@ char status[15];
 int birth_day[MAX_USERS];
 int birth_month[MAX_USERS];
 int birth_year[MAX_USERS];
+void deleteExpiredFlights();
+void deleteExpiredBookings();
 void register_user() {
-    printf("\t\t-------USER REGISTRATION--------\n");
+    printf("\t\t----------------USER REGISTRATION--------------\n");
     int isregister = 0, i;
     char name[MAX_NAME_LEN];
      do {
@@ -70,9 +83,17 @@ void register_user() {
             }
         } while (strlen(passwords[count]) < 8);
 
-        printf("\t\tDATE OF BIRTH (DD-MM-YYYY): ");
-        scanf("%d-%d-%d", &birth_day[count], &birth_month[count], &birth_year[count]);
-        validateBirthDate(birth_day,birth_month,birth_year);
+        int valid_dob = 0;
+        do {
+            printf("\t\tDATE OF BIRTH (DD-MM-YYYY): ");
+            scanf("%d-%d-%d", &birth_day[count], &birth_month[count], &birth_year[count]);
+            
+            valid_dob = validateBirthDate(birth_day[count], birth_month[count], birth_year[count]);
+
+            if (!valid_dob) {
+                printf("\t\tINVALID DATE OF BIRTH. PLEASE ENTER A VALID DATE (DD-MM-YYYY).\n");
+            }
+        } while (!valid_dob);
           int valid_phone = 0;
         do {
             printf("\t\tPHONE NO: ");
@@ -114,6 +135,23 @@ void register_user() {
         system("pause");
         system("cls");
     }
+}
+void saveusers() {
+    FILE *file = fopen(F, "w");
+    if (file == NULL) {
+        printf("ERROR FILE NOT FOUND\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        fprintf(file, "%s,%s,%02d-%02d-%04d,%s,%s,%s\n", 
+                usernames[i], 
+                passwords[i], 
+                birth_day[i], birth_month[i], birth_year[i], 
+                phone[i], 
+                gender[i], 
+                email[i]);
+    }
+    fclose(file);
 }
 void login_user(char name[MAX_NAME_LEN], char password[MAX_PASSWORD_LEN]) {
     int i;
@@ -166,23 +204,6 @@ void forgot_password(char name[MAX_NAME_LEN],char Email[MAX_EMAIL_LEN]) {
     system("pause");
     fflush(stdin);
     system("cls");
-}
-void saveusers() {
-    FILE *file = fopen(F, "w");
-    if (file == NULL) {
-        printf("ERROR FILE NOT FOUND\n");
-        return;
-    }
-    for (int i = 0; i < count; i++) {
-        fprintf(file, "%s,%s,%02d-%02d-%04d,%s,%s,%s\n", 
-                usernames[i], 
-                passwords[i], 
-                birth_day[i], birth_month[i], birth_year[i], 
-                phone[i], 
-                gender[i], 
-                email[i]);
-    }
-    fclose(file);
 }
 
 void loadusers() {
