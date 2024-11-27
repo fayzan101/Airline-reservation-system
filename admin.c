@@ -341,7 +341,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d%s\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets, modificationMessage);
             } else {
-                // No changes, write the original line
+                // If no changes, write the booking as is (do not write it twice)
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
             }
