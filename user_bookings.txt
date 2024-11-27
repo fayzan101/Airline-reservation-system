@@ -1,0 +1,7 @@
+
+faizan: Flight Number: pk100, From: karachi, To: lahor, On: 15-12-2025, At: 14:00, Class: Economy, No of Tickets: 1 
+
+sufyan: Flight Number: pk100, From: karachi, To: lahor, On: 15-12-2025, At: 14:00, Class: Economy, No of Tickets: 1 
+
+yasir: Flight Number: pk100, From: karachi, To: lahor, On: 15-12-2025, At: 14:00, Class: Economy, No of Tickets: 3 
+
