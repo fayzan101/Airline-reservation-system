@@ -302,7 +302,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
     char trimmedFlightNumber[50];
     snprintf(trimmedFlightNumber, sizeof(trimmedFlightNumber), "%s", flightNumber);
     trimmedFlightNumber[strcspn(trimmedFlightNumber, "\n")] = 0;
-    trimmedFlightNumber[strcspn(trimmedFlightNumber, " ")] = 0;  
+    trimmedFlightNumber[strcspn(trimmedFlightNumber, " ")] = 0;
 
     while (fgets(line, sizeof(line), file)) {
         char username[50], flightNum[50], from[50], to[50], travelDate[20], departureTime[10], flightClass[20];
@@ -310,34 +310,51 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
 
         sscanf(line, "%[^:]: Flight Number: %[^,], From: %[^,], To: %[^,], On: %[^,], At: %[^,], Class: %[^,], No of Tickets: %d",
                username, flightNum, from, to, travelDate, departureTime, flightClass, &numTickets);
-        if (strcmp(flightNum, trimmedFlightNumber) == 0) {  
+
+        if (strcmp(flightNum, trimmedFlightNumber) == 0) {
             foundBookings = 1;
+            int dateChanged = 0, timeChanged = 0;
             char modificationMessage[100] = "";
+
+            // Check and apply changes to the date and time
             if (newDate[0] != '\0' && strcmp(newDate, travelDate) != 0) {
                 snprintf(travelDate, sizeof(travelDate), "%s", newDate);
-                strcat(modificationMessage, " [Modified: Departure Date Changed]");
+                dateChanged = 1;
             }
             if (newTime[0] != '\0' && strcmp(newTime, departureTime) != 0) {
                 snprintf(departureTime, sizeof(departureTime), "%s", newTime);
-                if (strlen(modificationMessage) > 0) {
-                    strcat(modificationMessage, ", ");
-                }
-                strcat(modificationMessage, " [Modified: Departure Time Changed]");
+                timeChanged = 1;
             }
-            if (strlen(modificationMessage) > 0) {
+
+            if (dateChanged || timeChanged) {
+                // Build modification message based on changes
+                if (dateChanged) {
+                    strcat(modificationMessage, " [Modified: Departure Date Changed]");
+                }
+                if (timeChanged) {
+                    if (strlen(modificationMessage) > 0) {
+                        strcat(modificationMessage, ", ");
+                    }
+                    strcat(modificationMessage, " [Modified: Departure Time Changed]");
+                }
+                // Write the updated booking with modification message
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d%s\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets, modificationMessage);
             } else {
+                // No changes, write the original line
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
             }
         } else {
-               fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
-                        username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
+            // Write the booking as is if no change to flight number
+            fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
+                    username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
         }
     }
+
     fclose(file);
     fclose(tempFile);
+
     remove(UB);
     rename("temp.txt", UB);
 
@@ -345,6 +362,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
         printf("\nNo bookings found for the specified flight.\n");
     }
 }
+
 void view_all_bookings() {
     FILE *file = fopen("user_bookings.txt", "r"); 
     if (file == NULL) {
