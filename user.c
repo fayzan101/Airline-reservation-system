@@ -7,6 +7,8 @@ void usermenu() {
 	 int user_choice;
 	 int current_day, current_month, current_year;
     getCurrentDate(&current_day, &current_month, &current_year); 
+    while(1)
+    {
     printf("\t\t---------------USER MENU------------------\n");
     printf("1. USER DETAILS\n");
 	printf("2. VIEW AVAILABLE FLIGHTS\n");
@@ -16,7 +18,20 @@ void usermenu() {
     printf("6. CANCEL BOOKINGS\n");
     printf("7. LOGOUT\n");
     printf("\n\t\tENTER YOUR CHOICE(1-7): ");
-    scanf("%d", &user_choice);
+     if (scanf("%d", &user_choice) != 1) { // Validate input
+            printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            system("pause");
+            system("cls");
+            continue; 
+        }
+
+        if (user_choice < 1 || user_choice > 7) { // Check if input is out of range
+            printf("\n\t\tINVALID CHOICE! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
+            system("pause");
+            system("cls");
+            continue; // Go back to the menu
+        }
     switch (user_choice) {
     	case 1:
     		system("cls");
@@ -75,6 +90,7 @@ void usermenu() {
         	system("cls");
             break;
     }
+}
 }
 void userdetails() {
     int current_day, current_month, current_year;
