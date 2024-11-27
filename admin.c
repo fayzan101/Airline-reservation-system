@@ -217,7 +217,7 @@ void modify_flights() {
         printf("No flight records found.\n");
         return;
     }
-    FILE *tempFile = fopen("t.txt", "w");
+    FILE *tempFile = fopen("t.txt", "a+");
     if (tempFile == NULL) {
         printf("Error: Unable to create temporary file.\n");
         fclose(file);
@@ -266,9 +266,7 @@ void modify_flights() {
 
             fprintf(tempFile, "%d,%s,%s,%s,%s,%s\n", flightNumField, flightNum, origin, destination, travelDate, departureTime);
         } else {
-        	
             fprintf(tempFile, "%d,%s,%s,%s,%s,%s\n", flightNumField, flightNum, origin, destination, travelDate, departureTime);
-            
         }
     }
     fclose(file);
@@ -291,7 +289,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
         printf("No Bookings Available to Update.\n");
         return;
     }
-    FILE *tempFile = fopen("temp.txt", "w");
+    FILE *tempFile = fopen("temp.txt", "a+");
     if (tempFile == NULL) {
         printf("Error: Unable to create temporary file.\n");
         fclose(file);
@@ -307,14 +305,16 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
     while (fgets(line, sizeof(line), file)) {
         char username[50], flightNum[50], from[50], to[50], travelDate[20], departureTime[10], flightClass[20];
         int numTickets;
+        char existingModMessage[200] = ""; // To store existing modification message
 
-        sscanf(line, "%[^:]: Flight Number: %[^,], From: %[^,], To: %[^,], On: %[^,], At: %[^,], Class: %[^,], No of Tickets: %d",
-               username, flightNum, from, to, travelDate, departureTime, flightClass, &numTickets);
+        // Extract the modification message from the old booking line
+        sscanf(line, "%[^:]: Flight Number: %[^,], From: %[^,], To: %[^,], On: %[^,], At: %[^,], Class: %[^,], No of Tickets: %d %[^\n]",
+               username, flightNum, from, to, travelDate, departureTime, flightClass, &numTickets, existingModMessage);
 
         if (strcmp(flightNum, trimmedFlightNumber) == 0) {
             foundBookings = 1;
             int dateChanged = 0, timeChanged = 0;
-            char modificationMessage[100] = "";
+            char modificationMessage[200] = "";  // To store modification message
 
             // Check and apply changes to the date and time
             if (newDate[0] != '\0' && strcmp(newDate, travelDate) != 0) {
@@ -326,29 +326,38 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                 timeChanged = 1;
             }
 
-            if (dateChanged || timeChanged) {
-                // Build modification message based on changes
-                if (dateChanged) {
-                    strcat(modificationMessage, " [Modified: Departure Date Changed]");
+            // Combine the new modification message with the old one (if any)
+            if (dateChanged) {
+                if (strlen(modificationMessage) > 0) {
+                    strcat(modificationMessage, ", ");
                 }
-                if (timeChanged) {
-                    if (strlen(modificationMessage) > 0) {
-                        strcat(modificationMessage, ", ");
-                    }
-                    strcat(modificationMessage, " [Modified: Departure Time Changed]");
+                strcat(modificationMessage, " [Departure Date Changed]");
+            }
+            if (timeChanged) {
+                if (strlen(modificationMessage) > 0) {
+                    strcat(modificationMessage, ", ");
                 }
-                // Write the updated booking with modification message
+                strcat(modificationMessage, " [Departure Time Changed]");
+            }
+
+            // Append the new modification message to the existing one
+            if (strlen(existingModMessage) > 0) {
+                if (strlen(modificationMessage) > 0) {
+                    strcat(modificationMessage, ", ");
+                }
+                strcat(modificationMessage, existingModMessage);
+            }
+
+            // Only write if the modification message has been updated or if it's an unchanged booking with the same modification message
+            if (strlen(modificationMessage) > 0) {
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d%s\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets, modificationMessage);
-            } else {
-                // Write the booking as is (no modification message)
-                fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
-                        username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
             }
         } else {
             // Write the booking as is for users who are not modifying the flight
-            fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n",
-                    username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets);
+            if (strlen(line) > 0) {
+                fprintf(tempFile, "%s", line);
+            }
         }
     }
 
