@@ -553,25 +553,44 @@ void view_user_bookings() {
                 printf("%s\n", bookingDetails);
                 printf("Note: The flight (%s) has been canceled.\n", flightNumber);
                 continue; 
-            } 
-            else if (strstr(line, "[Modified: Departure Date Changed]")) {
-                printf("%s\n", bookingDetails);
-                printf("Note: The departure date for flight (%s) has been modified.\n", flightNumber);
-                char *modifiedPos = strstr(line, "[Modified: Departure Date Changed]");
-                if (modifiedPos) {
-                    *modifiedPos = '\0'; 
-                }
-            } else if (strstr(line, "[Modified: Departure Time Changed]")) {
-                printf("%s\n", bookingDetails);
-                printf("Note: The departure time for flight (%s) has been modified.\n", flightNumber);
-                char *modifiedPos = strstr(line, "[Modified: Departure Time Changed]");
-                if (modifiedPos) {
-                    *modifiedPos = '\0'; 
-                }
-            } else {
-                printf("%s\n", bookingDetails);
             }
 
+            int dateModified = 0;
+            int timeModified = 0;
+
+            // Check for date and time changes
+            if (strstr(line, "[Departure Date Changed]")) {
+                dateModified = 1;
+            }
+            if (strstr(line, "[Departure Time Changed]")) {
+                timeModified = 1;
+            }
+            printf("%s\n", bookingDetails);
+            if (dateModified || timeModified) {
+                printf("Note: ");
+                if (dateModified && timeModified) {
+                    printf("Departure time and date for flight (%s) changed", flightNumber);
+                } else {
+                    if (dateModified) {
+                        printf("Departure date for flight (%s) changed", flightNumber);
+                    }
+                    if (timeModified) {
+                        if (dateModified) {
+                            printf(" and ");
+                        }
+                        printf("Departure time for flight (%s) changed", flightNumber);
+                    }
+                }
+                printf(".\n");
+            }
+            char *modifiedPos = strstr(line, "[Departure Date Changed]");
+            if (modifiedPos) {
+                *modifiedPos = '\0'; 
+            }
+            modifiedPos = strstr(line, "[Departure Time Changed]");
+            if (modifiedPos) {
+                *modifiedPos = '\0'; 
+            }
             fprintf(tempFile, "%s\n", line);
         } else {
             fputs(line, tempFile); 
@@ -587,6 +606,7 @@ void view_user_bookings() {
     remove(UB);
     rename("temp.txt", UB);
 }
+
 void deleteExpiredBookings() {
     int current_day, current_month, current_year, current_hour, current_minute;
     getCurrentDate(&current_day, &current_month, &current_year);
