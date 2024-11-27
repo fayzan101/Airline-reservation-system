@@ -11,6 +11,8 @@
 
 void adminmenu() {
      int admin_choice;
+    while(1)
+    {
     printf("\t\t------------ADMIN MENU------------------\n");
     printf("1. ADD FLIGHT\n");
     printf("2. DELETE FLIGHT\n");
@@ -18,8 +20,20 @@ void adminmenu() {
     printf("4. VIEW ALL BOOKINGS\n");
     printf("5. SEARCH BOOKINGS\n");
     printf("6. LOGOUT\n");
-    printf("\n\t\tENTER YOUR CHOICE: ");
-    scanf("%d", &admin_choice);
+    printf("\n\t\tENTER YOUR CHOICE(1-6): ");
+     if (scanf("%d", &admin_choice) != 1) {
+            printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 6.\n");
+            while (getchar() != '\n'); 
+            system("pause");
+            system("cls");
+            continue;
+        }
+        if (admin_choice < 1 || admin_choice > 6) { 
+            printf("\n\t\tINVALID CHOICE! PLEASE ENTER A NUMBER BETWEEN 1 AND 6.\n");
+            system("pause");
+            system("cls");
+            continue; 
+        }
         switch (admin_choice) {
         case 1:system("cls"); 
                addFlight();
@@ -49,6 +63,7 @@ void adminmenu() {
         	system("cls");
             break;
     }
+}
 }
 void addFlight() {
     int count = 1;
@@ -125,6 +140,7 @@ void addFlight() {
     system("pause");
     system("cls");
 }
+
 void deleteFlight() {
     loadAvailableFlights();
     if (availableFlightCount == 0) {
@@ -305,9 +321,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
     while (fgets(line, sizeof(line), file)) {
         char username[50], flightNum[50], from[50], to[50], travelDate[20], departureTime[10], flightClass[20];
         int numTickets;
-        char existingModMessage[200] = ""; // To store existing modification message
-
-        // Extract the modification message from the old booking line
+        char existingModMessage[200] = ""; 
         sscanf(line, "%[^:]: Flight Number: %[^,], From: %[^,], To: %[^,], On: %[^,], At: %[^,], Class: %[^,], No of Tickets: %d %[^\n]",
                username, flightNum, from, to, travelDate, departureTime, flightClass, &numTickets, existingModMessage);
 
@@ -347,8 +361,6 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                 }
                 strcat(modificationMessage, existingModMessage);
             }
-
-            // Only write if the modification message has been updated or if it's an unchanged booking with the same modification message
             if (strlen(modificationMessage) > 0) {
                 fprintf(tempFile, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d%s\n",
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets, modificationMessage);
