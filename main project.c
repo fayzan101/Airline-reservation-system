@@ -26,7 +26,7 @@ char *travelDate, char *departureTime, char *travelClass,int *ticketCount);
 void deleteExpiredFlights();
 void deleteExpiredBookings();
 int main() {
-    char choice;
+    int choice; 
     loadusers();
     while (1) {
         if (!islogin) {
@@ -36,11 +36,24 @@ int main() {
             printf("\t\t3. LOGIN AS ADMIN\n");
             printf("\t\t4. FORGOT PASSWORD\n");
             printf("\t\t5. EXIT\n");
-            printf("\n\t\tENTER YOUR CHOICE(1-5): ");
-            scanf(" %c", &choice);
+            printf("\n\t\tENTER YOUR CHOICE (1-5): ");
+
+            if (scanf("%d", &choice) != 1) {
+                printf("\t\tINVALID INPUT. PLEASE ENTER A NUMBER BETWEEN 1 AND 5.\n");
+                while (getchar() != '\n'); 
+                system("pause");
+                system("cls");
+                continue;
+            }
+
+            if (choice < 1 || choice > 5) { 
+                printf("\t\tINVALID CHOICE. TRY AGAIN.\n");
+                continue;
+            }
+
             system("cls");
             switch (choice) {
-                case '1':
+                case 1:
                     if (count >= MAX_USERS) {
                         printf("\t\tREGISTRATION LIMIT EXCEEDED\n");
                         system("pause");
@@ -49,7 +62,7 @@ int main() {
                         register_user();
                     }
                     break;
-                case '2': {
+                case 2: {
                     printf("\t\t-----------LOGIN AS USER-----------\n");
                     char name[MAX_NAME_LEN], password[MAX_PASSWORD_LEN];
                     printf("\t\tENTER USERNAME: ");
@@ -59,7 +72,7 @@ int main() {
                     login_user(name, password);
                     break;
                 }
-                case '3': {
+                case 3: {
                     printf("\t\t---------LOGIN AS ADMIN---------\n");
                     char name[MAX_NAME_LEN], password[MAX_PASSWORD_LEN];
                     printf("\t\tENTER USERNAME: ");
@@ -69,23 +82,19 @@ int main() {
                     login_admin(name, password);
                     break;
                 }
-                case '4':
-                	printf("\t\t------------------------FORGOT PASSWORD--------------------------\n");
+                case 4:
+                    printf("\t\t------------------------FORGOT PASSWORD--------------------------\n");
                     printf("\t\tENTER USERNAME: ");
                     char name[MAX_NAME_LEN];
                     char Email[MAX_EMAIL_LEN];
                     scanf("%s", name);
-                    printf("\t\tENTER EMAIL:"),
-                    scanf(" %s",Email);
-                    forgot_password(name,Email);
+                    printf("\t\tENTER EMAIL: ");
+                    scanf(" %s", Email);
+                    forgot_password(name, Email);
                     break;
-                case '5':
+                case 5:
                     printf("\t---------------------THANK YOU FOR USING FAST AIRLINE-------------------------\n");
                     exit(0);
-                default:
-                    printf("\t\tINVALID CHOICE. TRY AGAIN\n");
-                    system("pause");
-                    system("cls");
             }
         } else {
             if (isadmin)
