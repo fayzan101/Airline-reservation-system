@@ -245,7 +245,6 @@ void modify_flights() {
      int current_day, current_month, current_year, current_hour, current_minute;
       fflush(stdin);
      getCurrentDate(&current_day, &current_month, &current_year);
-    getCurrentTime(&current_hour, &current_minute);
        fflush(stdin);
     int day, month, year,hour, minute;
     printf("\n\t\t============ FLIGHT MODIFICATION ============\n");
@@ -303,19 +302,23 @@ void modify_flights() {
         }
                 snprintf(updatedDate, sizeof(updatedDate), "%s", newDetails);
                 snprintf(travelDate, sizeof(travelDate), "%s", updatedDate);
-            } else if (choice == 2) {
-            	fflush(stdin);
+           else if (choice == 2) {
+                fflush(stdin);
                 printf("Enter New Departure Time (hh:mm): ");
                 gets(newDetails);
                 sscanf(newDetails, "%d:%d", &hour, &minute);
-                 sscanf(travelDate, "%d-%d-%d", &day, &month, &year);
+                sscanf(travelDate, "%d-%d-%d", &day, &month, &year);
+                getCurrentTime(&current_hour, &current_minute);
+
                 while (!validDepartureTime(hour, minute, day, month, year, current_day, current_month, current_year)) {
-        		 printf("Enter Departure Time (hh:mm): ");
-        		 getchar();
-        		 gets(newDetails);
-        		 sscanf(newDetails, "%d:%d", &hour, &minute);
-    }
-                snprintf(updatedTime, sizeof(updatedTime), "%s", newDetails);
+                    printf("Invalid Time. The time cannot be in the past! Please enter a valid time.\n");
+                    printf("Enter Departure Time (hh:mm): ");
+                    fflush(stdin);  
+                    gets(newDetails);
+                    sscanf(newDetails, "%d:%d", &hour, &minute);
+                    getCurrentTime(&current_hour, &current_minute);  
+                }
+		          snprintf(updatedTime, sizeof(updatedTime), "%s", newDetails);
                 snprintf(departureTime, sizeof(departureTime), "%s", updatedTime);
             } else {
                 printf("Invalid choice.\n");
