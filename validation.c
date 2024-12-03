@@ -32,20 +32,21 @@ int validDepartureDate(int day, int month, int year, int current_day, int curren
 int validDepartureTime(int hour, int minute, int day, int month, int year, int current_day, int current_month, int current_year) {
     int current_hour, current_minute;
     getCurrentTime(&current_hour, &current_minute);
-
-    if (year > current_year || (year == current_year && month > current_month) || 
+    if (year > current_year || 
+        (year == current_year && month > current_month) || 
         (year == current_year && month == current_month && day > current_day)) {
-        return 1; 
+        return 1;  
     }
-
     if (day == current_day && month == current_month && year == current_year) {
         if (hour > current_hour || (hour == current_hour && minute >= current_minute)) {
-            return 1;
+            return 1; 
         }
     }
     printf("Invalid departure time: Time cannot be in the past!\n");
     return 0;
 }
+
+
 int calculateAge(int birth_day, int birth_month, int birth_year, int current_day, int current_month, int current_year) {
     int ageYears = current_year - birth_year;
     if (birth_month > 12 || (birth_month == 12 && birth_day > 31)) {
