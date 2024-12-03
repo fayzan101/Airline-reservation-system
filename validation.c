@@ -65,6 +65,7 @@ int isLeapYear(int year)
 }
 int validateBirthDate(int day, int month, int year)
 {
+	int current_year,current_month,current_day;
 const char *month_names[] =
 {
         "Invalid", "January", "February", "March", "April", "May", "June",
@@ -72,15 +73,13 @@ const char *month_names[] =
     };
 if(day == 0 && month == 0 & year == 0)
 {
-printf("\t\tTotally Invalid Date of Birth Entered !\n");
+	return 0;
 }
     if (year < 1900 || year > 2024)
 {
-        printf("\t\tYear Must be between 1900 and 2024!\n");
         return 0;
     }
     if (month < 1 || month > 12) {
-        printf("\t\tInvalid Month Entered for Birth Date!\n");
         return 0;
     }
     if (month == 2) {
@@ -97,6 +96,12 @@ printf("\t\tTotally Invalid Date of Birth Entered !\n");
 } else if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 ||month == 10 || month == 12) && day > 31){
 printf("\t\t%s month can have only 31 Days !\n",month_names[month]);
 }
+   getCurrentDate(&current_day,&current_month,&current_year);
+    if (year > current_year || 
+        (year == current_year && month > current_month) || 
+        (year == current_year && month == current_month && day > current_day)) {
+        return 0;
+    }
 return 1;
 }
 int calculateTravelFrequency(const char* username) {
@@ -118,12 +123,15 @@ int calculateTravelFrequency(const char* username) {
     return frequency;
 }
 const char* getUserStatus(int age, int travelFrequency) {
-    if (travelFrequency >= 10) return "Gold";
+	if (travelFrequency >= 10) return "Platinum";
+    else if (travelFrequency >= 7) return "Gold";
     else if (travelFrequency >= 4) return "Silver";
     else return "Bronze";
 }
 const char* getUserPerks(const char* status) {
-    if (strcmp(status, "Gold") == 0) {
+	if (strcmp(status, "Platinum") == 0) {
+        return "Priority boarding, two extra baggages, free lounge access, cashback.";
+    } else if (strcmp(status, "Gold") == 0) {
         return "Priority boarding, extra baggage, free lounge access.";
     } else if (strcmp(status, "Silver") == 0) {
         return "Priority check-in, extra baggage allowance.";
