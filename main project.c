@@ -7,37 +7,18 @@
 #include "registration.c"
 #include "admin.c"
 #include "user.c"
-
-#define MAX_FLIGHTS 100
-#define MAX_BOOKINGS 100
-
-#define F "user_info.txt"
-#define FL "flight.txt"
-#define UB "user_bookings.txt"
-void usermenu();
-void userdetails();
-void bookFlight();
-void displayAvailableFlights();
-void view_user_bookings();
-void modifyBookings();
-void cancelBooking();
-void saveUser_Flights(char *username, char *flightNumber, char *origin, char *destination,
-char *travelDate, char *departureTime, char *travelClass,int *ticketCount);
-void deleteExpiredFlights();
-void deleteExpiredBookings();
 int main() {
     int choice; 
     loadusers();
     while (1) {
         if (!islogin) {
-            printf("\t\t----------------------------WELCOME TO FAST AIRLINE RESERVATION SYSTEM-----------------------------\n");
+            printf("\t\t========================== WELCOME TO FAST AIRLINE RESERVATION SYSTEM ==========================\n\n");
             printf("\t\t1. REGISTER\n");
             printf("\t\t2. LOGIN AS USER\n");
             printf("\t\t3. LOGIN AS ADMIN\n");
             printf("\t\t4. FORGOT PASSWORD\n");
             printf("\t\t5. EXIT\n");
             printf("\n\t\tENTER YOUR CHOICE (1-5): ");
-
             if (scanf("%d", &choice) != 1) {
                 printf("\t\tINVALID INPUT. PLEASE ENTER A NUMBER BETWEEN 1 AND 5.\n");
                 while (getchar() != '\n'); 
@@ -45,12 +26,10 @@ int main() {
                 system("cls");
                 continue;
             }
-
             if (choice < 1 || choice > 5) { 
                 printf("\t\tINVALID CHOICE. TRY AGAIN.\n");
                 continue;
             }
-
             system("cls");
             switch (choice) {
                 case 1:
@@ -63,7 +42,7 @@ int main() {
                     }
                     break;
                 case 2: {
-                    printf("\t\t-----------LOGIN AS USER-----------\n");
+                    printf("\t\t=========== LOGIN AS USER ===========\n");
                     char name[MAX_NAME_LEN], password[MAX_PASSWORD_LEN];
                     printf("\t\tENTER USERNAME: ");
                     scanf("%s", name);
@@ -73,7 +52,7 @@ int main() {
                     break;
                 }
                 case 3: {
-                    printf("\t\t---------LOGIN AS ADMIN---------\n");
+                    printf("\t\t=========== LOGIN AS ADMIN ===========\n");
                     char name[MAX_NAME_LEN], password[MAX_PASSWORD_LEN];
                     printf("\t\tENTER USERNAME: ");
                     scanf("%s", name);
@@ -83,7 +62,7 @@ int main() {
                     break;
                 }
                 case 4:
-                    printf("\t\t------------------------FORGOT PASSWORD--------------------------\n");
+                    printf("\t\t=========== FORGOT PASSWORD ===========\n");
                     printf("\t\tENTER USERNAME: ");
                     char name[MAX_NAME_LEN];
                     char Email[MAX_EMAIL_LEN];
@@ -93,7 +72,7 @@ int main() {
                     forgot_password(name, Email);
                     break;
                 case 5:
-                    printf("\t---------------------THANK YOU FOR USING FAST AIRLINE-------------------------\n");
+                    printf("\t\t========================== THANK YOU FOR USING FAST AIRLINES ==========================\n\n");
                     exit(0);
             }
         } else {
@@ -108,7 +87,7 @@ void deleteExpiredBookings() {
     int current_day, current_month, current_year, current_hour, current_minute;
     getCurrentDate(&current_day, &current_month, &current_year);
     getCurrentTime(&current_hour, &current_minute);
-    FILE *bookingsFile = fopen("user_bookings.txt", "r");
+    FILE *bookingsFile = fopen(UB, "r");
     if (bookingsFile == NULL) {
         printf("Error: Could not open user bookings file for reading.\n");
         return;
@@ -141,7 +120,7 @@ void deleteExpiredBookings() {
 
     fclose(bookingsFile);
     fclose(tempBookingsFile);
-    remove("user_bookings.txt");
+    remove(UB);
     rename("temp_user_bookings.txt", "user_bookings.txt");
 }
 void deleteExpiredFlights() {
