@@ -3,33 +3,50 @@
 #include<string.h>
 #include<stdlib.h>
 
-#define MAX_FLIGHTS 100
-#define MAX_BOOKINGS 10
-#define F "user_info.txt"
-#define FL "flight.txt"
-#define UB "user_bookings.txt"
-
+#define MAX_FLIGHTS 30
+#define MAX_BOOKINGS 30
+typedef struct {
+    char flightNumber[20];
+    char origin[50];
+    char destination[50];
+    char travelDate[20];
+    char departureTime[20];
+    int no;
+} Flight;
+Flight availableFlights[MAX_FLIGHTS];
+void usermenu();
+void userdetails();
+void bookFlight();
+void displayAvailableFlights();
+void view_user_bookings();
+void modifyBookings();
+void cancelBooking();
+void saveUser_Flights(char *username, char *flightNumber, char *origin, char *destination,
+char *travelDate, char *departureTime, char *travelClass,int *ticketCount);
+void deleteExpiredFlights();
+void deleteExpiredBookings();
 void adminmenu() {
      int admin_choice;
     while(1)
     {
-    printf("\t\t------------ADMIN MENU------------------\n");
+    printf("\n\t\t============ ADMIN MENU ============\n");
     printf("1. ADD FLIGHT\n");
     printf("2. DELETE FLIGHT\n");
-    printf("3  MODIFIY FLIGHTS\n");
-    printf("4. VIEW ALL BOOKINGS\n");
-    printf("5. SEARCH BOOKINGS\n");
-    printf("6. LOGOUT\n");
+    printf("3. MODIFIY FLIGHTS\n");
+    printf("4. VIEW ALL FLIGHTS\n");
+    printf("5. VIEW ALL BOOKINGS\n");
+    printf("6. SEARCH BOOKINGS\n");
+    printf("7. LOGOUT\n");
     printf("\n\t\tENTER YOUR CHOICE(1-6): ");
      if (scanf("%d", &admin_choice) != 1) {
-            printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 6.\n");
+            printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
             while (getchar() != '\n'); 
             system("pause");
             system("cls");
             continue;
         }
-        if (admin_choice < 1 || admin_choice > 6) { 
-            printf("\n\t\tINVALID CHOICE! PLEASE ENTER A NUMBER BETWEEN 1 AND 6.\n");
+        if (admin_choice < 1 || admin_choice > 7) { 
+            printf("\n\t\tINVALID CHOICE! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
             system("pause");
             system("cls");
             continue; 
@@ -45,15 +62,21 @@ void adminmenu() {
     		   modify_flights();
                break;
         case 4:system("cls");
+        displayAvailableFlights();
+        system("pause");
+        system("cls");
+        break;
+        case 5:system("cls");
 		   deleteExpiredFlights(); 
     		   view_all_bookings();
                 break;
-        case 5: 
+        case 6: 
 		    system("cls");
         	deleteExpiredFlights();
             searchbookings();
             break;
-        case 6:islogin = 0;
+        case 7:
+		    islogin = 0;
             isadmin = 0;
             system("cls");
             return;
@@ -81,6 +104,7 @@ void addFlight() {
         printf("ERROR: Could not open file for writing.\n");
         return;
     }
+    printf("\n\t\t\t========= ADD FLIGHTS =========\n\n");
     fflush(stdin);
     int current_day, current_month, current_year, current_hour, current_minute;
     getCurrentDate(&current_day, &current_month, &current_year);
@@ -96,6 +120,8 @@ void addFlight() {
 
             if (strcmp(existingFlightNumber, newFlight.flightNumber) == 0) {
                 printf("This flight is already added. Cannot add the same flight twice!\n");
+                system("pause");
+                system("cls");
                 fclose(readFile);
                 fclose(file);
                 return;
@@ -113,7 +139,6 @@ void addFlight() {
     printf("Enter Departure Date (dd-mm-yyyy): ");
     gets(newFlight.travelDate);
     sscanf(newFlight.travelDate, "%d-%d-%d", &day, &month, &year);
-
     while (!validDepartureDate(day, month, year, current_day, current_month, current_year)) {
         printf("The Flight Departure Date cannot be in the past! Please enter a valid date.\n");
         printf("Enter Departure Date (dd-mm-yyyy): ");
@@ -127,7 +152,6 @@ void addFlight() {
     sscanf(newFlight.departureTime, "%d:%d", &hour, &minute);
 
     while (!validDepartureTime(hour, minute, day, month, year, current_day, current_month, current_year)) {
-        printf("The Flight Departure Time cannot be in the past! Please enter a valid time.\n");
         printf("Enter Departure Time (hh:mm): ");
         gets(newFlight.departureTime);
         sscanf(newFlight.departureTime, "%d:%d", &hour, &minute);
@@ -149,7 +173,8 @@ void deleteFlight() {
         system("cls");
         return;
     }
-    printf("\t\t---------------Available Flights---------------------------\n");
+    printf("\n\t\t============ FLIGHT DELETION ============\n");
+    printf("\n\t\t========= AVAILABLE FLIGHTS =========\n\n");
     for (int i = 0; i < availableFlightCount; i++) {
         printf("%d. Flight Number: %s, From: %s, To: %s, Departure On: %s, At: %s\n",
                i + 1, availableFlights[i].flightNumber, availableFlights[i].origin,
@@ -217,7 +242,14 @@ void modify_flights() {
         system("cls");
         return;
     }
-    printf("\t\t---------------Available Flights---------------------------\n");
+     int current_day, current_month, current_year, current_hour, current_minute;
+      fflush(stdin);
+     getCurrentDate(&current_day, &current_month, &current_year);
+    getCurrentTime(&current_hour, &current_minute);
+       fflush(stdin);
+    int day, month, year,hour, minute;
+    printf("\n\t\t============ FLIGHT MODIFICATION ============\n");
+    printf("\n\t\t========= AVAILABLE FLIGHTS =========\n\n");
     for (int i = 0; i < availableFlightCount; i++) {
         printf("Flight Number: %s, From: %s, To: %s, Departure On: %s, At: %s\n"
                , availableFlights[i].flightNumber, availableFlights[i].origin,
@@ -258,19 +290,31 @@ void modify_flights() {
             printf("2. Departure Time\n");
             printf("Enter your choice (1 or 2): ");
             scanf("%d", &choice);
-
             if (choice == 1) {
+            	fflush(stdin);
                 printf("Enter New Departure Date (dd-mm-yy): ");
-                getchar(); 
-                fgets(newDetails, sizeof(newDetails), stdin);
-                newDetails[strcspn(newDetails, "\n")] = 0;
+                gets(newDetails);
+                sscanf(newDetails, "%d-%d-%d", &day, &month, &year);
+                while (!validDepartureDate(day, month, year, current_day, current_month, current_year)){
+                printf("The Flight Departure Date cannot be in the past! Please enter a valid date.\n");
+        	printf("Enter Departure Date (dd-mm-yyyy): ");
+            gets(newDetails);
+            sscanf(newDetails, "%d-%d-%d", &day, &month, &year);
+        }
                 snprintf(updatedDate, sizeof(updatedDate), "%s", newDetails);
                 snprintf(travelDate, sizeof(travelDate), "%s", updatedDate);
             } else if (choice == 2) {
+            	fflush(stdin);
                 printf("Enter New Departure Time (hh:mm): ");
-                getchar(); 
-                fgets(newDetails, sizeof(newDetails), stdin);
-                newDetails[strcspn(newDetails, "\n")] = 0;
+                gets(newDetails);
+                sscanf(newDetails, "%d:%d", &hour, &minute);
+                 sscanf(travelDate, "%d-%d-%d", &day, &month, &year);
+                while (!validDepartureTime(hour, minute, day, month, year, current_day, current_month, current_year)) {
+        		 printf("Enter Departure Time (hh:mm): ");
+        		 getchar();
+        		 gets(newDetails);
+        		 sscanf(newDetails, "%d:%d", &hour, &minute);
+    }
                 snprintf(updatedTime, sizeof(updatedTime), "%s", newDetails);
                 snprintf(departureTime, sizeof(departureTime), "%s", updatedTime);
             } else {
@@ -328,9 +372,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
         if (strcmp(flightNum, trimmedFlightNumber) == 0) {
             foundBookings = 1;
             int dateChanged = 0, timeChanged = 0;
-            char modificationMessage[200] = "";  // To store modification message
-
-            // Check and apply changes to the date and time
+            char modificationMessage[200] = ""; 
             if (newDate[0] != '\0' && strcmp(newDate, travelDate) != 0) {
                 snprintf(travelDate, sizeof(travelDate), "%s", newDate);
                 dateChanged = 1;
@@ -339,8 +381,6 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                 snprintf(departureTime, sizeof(departureTime), "%s", newTime);
                 timeChanged = 1;
             }
-
-            // Combine the new modification message with the old one (if any)
             if (dateChanged) {
                 if (strlen(modificationMessage) > 0) {
                     strcat(modificationMessage, ", ");
@@ -353,8 +393,6 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                 }
                 strcat(modificationMessage, " [Departure Time Changed]");
             }
-
-            // Append the new modification message to the existing one
             if (strlen(existingModMessage) > 0) {
                 if (strlen(modificationMessage) > 0) {
                     strcat(modificationMessage, ", ");
@@ -366,7 +404,6 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
                         username, flightNum, from, to, travelDate, departureTime, flightClass, numTickets, modificationMessage);
             }
         } else {
-            // Write the booking as is for users who are not modifying the flight
             if (strlen(line) > 0) {
                 fprintf(tempFile, "%s", line);
             }
@@ -392,7 +429,7 @@ void view_all_bookings() {
     }
 
     char line[256]; 
-    printf("\t\t----------------ALL BOOKINGS---------------------------\n");
+    printf("\n\t\t============ ALL BOOKINGS ============\n\n");
     while (fgets(line, sizeof(line), file)) {
         int isBlank = 1;
         for (int i = 0; line[i] != '\0'; i++) {
@@ -414,6 +451,7 @@ void view_all_bookings() {
 
 void searchbookings()
 {
+	printf("\n\t\t============ SEARCH BOOKINGS ============\n");
 	FILE *file = fopen(UB,"r");
 	if(file==NULL)
 	{
@@ -422,7 +460,7 @@ void searchbookings()
 	}
 	int found = 0;
 	char search[20];
-	printf("Enter booking details(Name,destination ,origin etc):");
+	printf("\nEnter booking details(Name,destination ,origin etc):");
 	scanf("%s",search);
 	char line[256];
 	while(fgets(line,sizeof(line),file))
@@ -433,9 +471,11 @@ void searchbookings()
 			found =1;
 		}
 	}
+	if(found){
+		system("pause");
+		system("cls");
+	}
 	fclose(file);
-	system("pause");
-	system("cls");
 	if(!found)
 	{
 		printf("NO BOOKING FOUND WITH THIS DETAIL\n");
@@ -443,4 +483,32 @@ void searchbookings()
 		system("cls");
 		return;
 	}
+}
+void loadAvailableFlights() {
+    FILE *file = fopen(FL, "r");
+    if (file == NULL) {
+        return;
+    }
+    availableFlightCount = 0;
+    while (fscanf(file, "%d,%[^,],%[^,],%[^,],%[^,],%[^\n]\n",&availableFlights[availableFlightCount].no, availableFlights[availableFlightCount].flightNumber, 
+                  availableFlights[availableFlightCount].origin, availableFlights[availableFlightCount].destination, 
+                  availableFlights[availableFlightCount].travelDate,availableFlights[availableFlightCount].departureTime) != EOF) {
+        availableFlightCount++;
+    }
+    fclose(file);
+}
+void displayAvailableFlights() {
+	deleteExpiredFlights();
+    loadAvailableFlights();
+    if (availableFlightCount == 0) {
+        printf("No flights available.....\n");
+        return;
+    }
+    printf("\n\t\t============ AVAILABLE FLIGHTS ============\n\n");
+    for (int i = 0; i < availableFlightCount; i++) {
+        printf("%d. Flight Number: %s, From:%s, To:%s, Departure On:%s, At:%s\n", 
+               i + 1, availableFlights[i].flightNumber, availableFlights[i].origin, availableFlights[i].destination,
+               availableFlights[i].travelDate,availableFlights[i].departureTime);
+    }
+    printf("\n");
 }
