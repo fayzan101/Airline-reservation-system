@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+
 void usermenu() {
 	 int user_choice;
 	 int current_day, current_month, current_year;
     getCurrentDate(&current_day, &current_month, &current_year); 
     while(1)
     {
-    printf("\t\t---------------USER MENU------------------\n");
+    printf("\n\t\t============ USER MENU ============\n");
     printf("1. USER DETAILS\n");
 	printf("2. VIEW AVAILABLE FLIGHTS\n");
     printf("3. BOOK FLIGHTS\n");
@@ -18,19 +19,19 @@ void usermenu() {
     printf("6. CANCEL BOOKINGS\n");
     printf("7. LOGOUT\n");
     printf("\n\t\tENTER YOUR CHOICE(1-7): ");
-     if (scanf("%d", &user_choice) != 1) { // Validate input
+     if (scanf("%d", &user_choice) != 1) { 
             printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
-            while (getchar() != '\n'); // Clear the input buffer
+            while (getchar() != '\n'); 
             system("pause");
             system("cls");
             continue; 
         }
 
-        if (user_choice < 1 || user_choice > 7) { // Check if input is out of range
+        if (user_choice < 1 || user_choice > 7) { 
             printf("\n\t\tINVALID CHOICE! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
             system("pause");
             system("cls");
-            continue; // Go back to the menu
+            continue;
         }
     switch (user_choice) {
     	case 1:
@@ -130,35 +131,21 @@ void userdetails() {
     system("pause");
     system("cls");
 }
-void displayAvailableFlights() {
-	deleteExpiredFlights();
-    loadAvailableFlights();
-    if (availableFlightCount == 0) {
-        printf("No flights available.....\n");
-        return;
-    }
-    printf("\n\t\t============ AVAILABLE FLIGHTS ============\n\n");
-    for (int i = 0; i < availableFlightCount; i++) {
-        printf("%d. Flight Number: %s, From:%s, To:%s, Departure On:%s, At:%s\n", 
-               i + 1, availableFlights[i].flightNumber, availableFlights[i].origin, availableFlights[i].destination,
-               availableFlights[i].travelDate,availableFlights[i].departureTime);
-    }
-    printf("\n");
-}
-void saveUser_Flights(char *username, char *flightNumber, char *origin, char *destination, char *travelDate, char *departureTime, char *travelClass, int *ticketCount) {
-    FILE *file = fopen("user_bookings.txt", "a+");
-    if (file == NULL) {
-        printf("ERROR: Could not open file for writing.\n");
-        return;
-    }
-
-//     Write the booking details with a single newline at the end
-    fprintf(file, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n", 
-            username, flightNumber, origin, destination, travelDate, departureTime, travelClass, *ticketCount);
-
-    fclose(file);
-}
-
+//void displayAvailableFlights() {
+//	deleteExpiredFlights();
+//    loadAvailableFlights();
+//    if (availableFlightCount == 0) {
+//        printf("No flights available.....\n");
+//        return;
+//    }
+//    printf("\n\t\t============ AVAILABLE FLIGHTS ============\n\n");
+//    for (int i = 0; i < availableFlightCount; i++) {
+//        printf("%d. Flight Number: %s, From:%s, To:%s, Departure On:%s, At:%s\n", 
+//               i + 1, availableFlights[i].flightNumber, availableFlights[i].origin, availableFlights[i].destination,
+//               availableFlights[i].travelDate,availableFlights[i].departureTime);
+//    }
+//    printf("\n");
+//}
 void bookFlight() {
     deleteExpiredFlights();
     loadAvailableFlights();
@@ -176,8 +163,6 @@ void bookFlight() {
         printf("Invalid choice. Please try again.\n");
         return;
     }
-
-    // Check if the flight is already booked by the user
     FILE *file = fopen(UB, "r");
     if (file != NULL) {
         char line[256];
@@ -238,20 +223,29 @@ void bookFlight() {
     
     printf("\n\t\t\tFlight booked successfully!\n\n");
 }
-
-void loadAvailableFlights() {
-    FILE *file = fopen(FL, "r");
+void saveUser_Flights(char *username, char *flightNumber, char *origin, char *destination, char *travelDate, char *departureTime, char *travelClass, int *ticketCount) {
+    FILE *file = fopen("user_bookings.txt", "a+");
     if (file == NULL) {
+        printf("ERROR: Could not open file for writing.\n");
         return;
     }
-    availableFlightCount = 0;
-    while (fscanf(file, "%d,%[^,],%[^,],%[^,],%[^,],%[^\n]\n",&availableFlights[availableFlightCount].no, availableFlights[availableFlightCount].flightNumber, 
-                  availableFlights[availableFlightCount].origin, availableFlights[availableFlightCount].destination, 
-                  availableFlights[availableFlightCount].travelDate,availableFlights[availableFlightCount].departureTime) != EOF) {
-        availableFlightCount++;
-    }
+    fprintf(file, "%s: Flight Number: %s, From: %s, To: %s, On: %s, At: %s, Class: %s, No of Tickets: %d\n", 
+            username, flightNumber, origin, destination, travelDate, departureTime, travelClass, *ticketCount);
     fclose(file);
 }
+//void loadAvailableFlights() {
+//    FILE *file = fopen(FL, "r");
+//    if (file == NULL) {
+//        return;
+//    }
+//    availableFlightCount = 0;
+//    while (fscanf(file, "%d,%[^,],%[^,],%[^,],%[^,],%[^\n]\n",&availableFlights[availableFlightCount].no, availableFlights[availableFlightCount].flightNumber, 
+//                  availableFlights[availableFlightCount].origin, availableFlights[availableFlightCount].destination, 
+//                  availableFlights[availableFlightCount].travelDate,availableFlights[availableFlightCount].departureTime) != EOF) {
+//        availableFlightCount++;
+//    }
+//    fclose(file);
+//}
 void modifyBookings() {
     FILE *file = fopen(UB, "r");
     if (file == NULL) {
@@ -262,15 +256,11 @@ void modifyBookings() {
     char line[256];
     char allBookings[MAX_BOOKINGS][256];
     int bookingCount = 0;
-
-    // Read all bookings from the file
     while (fgets(line, sizeof(line), file)) {
         strcpy(allBookings[bookingCount], line);
         bookingCount++;
     }
     fclose(file);
-
-    // Find current user's bookings
     char userBookings[MAX_BOOKINGS][256];
     int userBookingIndices[MAX_BOOKINGS];
     int userBookingCount = 0;
@@ -280,7 +270,7 @@ void modifyBookings() {
         sscanf(allBookings[i], "%[^:]:", username);
         if (strcmp(username, currentUser) == 0) {
             strcpy(userBookings[userBookingCount], allBookings[i]);
-            userBookingIndices[userBookingCount] = i; // Save the index in the main array
+            userBookingIndices[userBookingCount] = i; 
             userBookingCount++;
         }
     }
@@ -289,8 +279,6 @@ void modifyBookings() {
         printf("You have no bookings to modify.\n");
         return;
     }
-
-    // Display current user's bookings
     printf("\n\t\t============ FLIGHT BOOKING MODIFICATION ============\n");
     printf("\n\t\t\t========= YOUR CURRENT BOOKINGS =========\n\n");
     for (int i = 0; i < userBookingCount; i++) {
@@ -305,8 +293,6 @@ void modifyBookings() {
         printf("Invalid choice. Please try again.\n");
         return;
     }
-
-    // Ask for modification details
     int modifyChoice;
     printf("\nWhat would you like to modify?\n");
     printf("1. Class of travel\n");
@@ -340,8 +326,6 @@ void modifyBookings() {
         printf("Enter the new number of tickets: ");
         scanf("%d", &newTicketCount);
     }
-
-    // Modify the selected booking
     char updatedBooking[256];
     char *classStart = strstr(userBookings[bookingChoice - 1], "Class:");
     char *ticketsStart = strstr(userBookings[bookingChoice - 1], "No of Tickets:");
@@ -366,15 +350,11 @@ void modifyBookings() {
             strcat(updatedBooking, ticketsStart);
         }
         strcat(updatedBooking, "\n");
-
-        // Update the booking in the main array
         strcpy(allBookings[userBookingIndices[bookingChoice - 1]], updatedBooking);
     } else {
         printf("\nError: Could not find class or ticket information in the booking.\n");
         return;
     }
-
-    // Write all bookings back to the file
     file = fopen(UB, "w");
     for (int i = 0; i < bookingCount; i++) {
         fputs(allBookings[i], file);
@@ -383,7 +363,6 @@ void modifyBookings() {
 
     printf("\n\t\t\tBooking modified successfully!\n\n");
 }
-
 void cancelBooking() {
     FILE *file = fopen(UB, "r");
     if (file == NULL) {
@@ -462,11 +441,10 @@ void view_user_bookings() {
     printf("\n\t\t============ YOUR BOOKINGS ============\n\n");
     int foundBookings = 0;
     char line[256];
-
+    int i=0;
     while (fgets(line, sizeof(line), file)) {
         char username[50];
         sscanf(line, "%[^:]:", username);
-
         if (strcmp(username, currentUser) == 0) {
             foundBookings = 1;
             char *bookingDetails = strchr(line, ':') + 1;
@@ -481,15 +459,14 @@ void view_user_bookings() {
 
             int dateModified = 0;
             int timeModified = 0;
-
-            // Check for date and time changes
             if (strstr(line, "[Departure Date Changed]")) {
                 dateModified = 1;
             }
             if (strstr(line, "[Departure Time Changed]")) {
                 timeModified = 1;
             }
-            printf("%s\n", bookingDetails);
+            printf("%d.%s\n",i+1, bookingDetails);
+            i++;
             if (dateModified || timeModified) {
                 printf("Note: ");
                 if (dateModified && timeModified) {
