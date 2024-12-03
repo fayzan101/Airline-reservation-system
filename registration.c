@@ -4,51 +4,46 @@
 #include<stdlib.h>
 #define MAX_NAME_LEN 20
 #define MAX_PASSWORD_LEN 15
-#define MAX_USERS 7
-#define MAX_DOB_LEN 10
+#define MAX_USERS 20
 #define MAX_NO_LEN 13
 #define MAX_GENDER_LEN 6
 #define MAX_EMAIL_LEN 25
 #define ADMIN_PASSWORD "1234"
 #define ADMIN_NAME "admin"
-#define MAX_FLIGHTS 100
-#define MAX_BOOKINGS 10
 #define F "user_info.txt"
 #define FL "flight.txt"
 #define UB "user_bookings.txt"
-typedef struct {
-    char flightNumber[20];
-    char origin[50];
-    char destination[50];
-    char travelDate[20];
-    char departureTime[20];
-    int no;
-} Flight;
-Flight availableFlights[MAX_FLIGHTS];
+
 void saveusers();
 void adminmenu();
+void addFlight();
+void  deleteFlight();
+void view_all_bookings();
+void searchbookings();
+void modify_flights();
+void displayAvailableFlights();
+void deleteExpiredFlights(); 
+void loadAvailableFlights();
+void update_user_bookings(const char *flightNumber, const char *newDate, const char *newTime);
+
 int islogin = 0, isadmin = 0, count = 0,availableFlightCount = 0;
 char usernames[MAX_USERS][MAX_NAME_LEN];
 char passwords[MAX_USERS][MAX_PASSWORD_LEN];
-char dob[MAX_USERS][MAX_DOB_LEN];
 char phone[MAX_USERS][MAX_NO_LEN];
 char gender[MAX_USERS][MAX_GENDER_LEN];
 char email[MAX_USERS][MAX_EMAIL_LEN];
-char user_flights[MAX_USERS][MAX_FLIGHTS];
 char currentUser[MAX_NAME_LEN];
 int travelFrequency; 
 char status[15];  
 int birth_day[MAX_USERS];
 int birth_month[MAX_USERS];
 int birth_year[MAX_USERS];
-void deleteExpiredFlights();
-void deleteExpiredBookings();
 void register_user() {
     printf("\t\t----------------USER REGISTRATION--------------\n");
     int isregister = 0, i;
     char name[MAX_NAME_LEN];
      do {
-        printf("\t\tENTER USER NAME: ");
+        printf("\t\tENTER USERNAME: ");
         scanf(" %[^\n]", name); 
         int has_space = 0;
         for (i = 0; name[i] != '\0'; i++) {
@@ -120,7 +115,6 @@ void register_user() {
         do {
             printf("\t\tEMAIL: ");
             scanf(" %s", email[count]);
-
             char *at = strchr(email[count], '@');
             char *dot = strchr(email[count], '.');
             if (at && dot && at < dot) {
