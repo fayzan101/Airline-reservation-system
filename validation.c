@@ -2,19 +2,6 @@
 #include <time.h>
 #include<string.h>
 #include<stdlib.h>
-void getCurrentDate(int* day, int* month, int* year) {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    *day = tm.tm_mday;
-    *month = tm.tm_mon + 1; 
-    *year = tm.tm_year + 1900; 
-}
-void getCurrentTime(int* hour, int* minute) {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    *hour = tm.tm_hour;
-    *minute = tm.tm_min;
-}
 int validDepartureDate(int day, int month, int year, int current_day, int current_month, int current_year) {
     if (year > current_year) {
         return 1; 
@@ -139,4 +126,17 @@ const char* getUserPerks(const char* status) {
     } else {
         return "Basic perks like online check-in.";
     }
+}
+void getCurrentDate(int* day, int* month, int* year) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    *day = tm.tm_mday;
+    *month = tm.tm_mon + 1; 
+    *year = tm.tm_year + 1900; 
+}
+void getCurrentTime(int* hour, int* minute) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    *hour = tm.tm_hour;
+    *minute = tm.tm_min;
 }
