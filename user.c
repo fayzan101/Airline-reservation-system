@@ -115,7 +115,6 @@ void userdetails() {
     const char* userStatus = getUserStatus(age, travelFrequency);
     const char* userPerks = getUserPerks(userStatus);
 
-    if (age != -1) {
         printf("\t\t=========== USER DETAILS ===========\n");
         printf("\t\tUSERNAME: %s\n", usernames[userIndex]);
         printf("\t\tDATE OF BIRTH: %02d-%02d-%04d\n", birth_day[userIndex], birth_month[userIndex], birth_year[userIndex]);
@@ -125,27 +124,9 @@ void userdetails() {
         printf("\t\tAGE: %d years\n", age);
         printf("\t\tSTATUS: %s\n", userStatus);
         printf("\t\tPERKS: %s\n", userPerks);
-    } else {
-        printf("\t\tCould not calculate age due to invalid birth date.\n");
-    }
     system("pause");
     system("cls");
 }
-//void displayAvailableFlights() {
-//	deleteExpiredFlights();
-//    loadAvailableFlights();
-//    if (availableFlightCount == 0) {
-//        printf("No flights available.....\n");
-//        return;
-//    }
-//    printf("\n\t\t============ AVAILABLE FLIGHTS ============\n\n");
-//    for (int i = 0; i < availableFlightCount; i++) {
-//        printf("%d. Flight Number: %s, From:%s, To:%s, Departure On:%s, At:%s\n", 
-//               i + 1, availableFlights[i].flightNumber, availableFlights[i].origin, availableFlights[i].destination,
-//               availableFlights[i].travelDate,availableFlights[i].departureTime);
-//    }
-//    printf("\n");
-//}
 void bookFlight() {
     deleteExpiredFlights();
     loadAvailableFlights();
@@ -233,19 +214,7 @@ void saveUser_Flights(char *username, char *flightNumber, char *origin, char *de
             username, flightNumber, origin, destination, travelDate, departureTime, travelClass, *ticketCount);
     fclose(file);
 }
-//void loadAvailableFlights() {
-//    FILE *file = fopen(FL, "r");
-//    if (file == NULL) {
-//        return;
-//    }
-//    availableFlightCount = 0;
-//    while (fscanf(file, "%d,%[^,],%[^,],%[^,],%[^,],%[^\n]\n",&availableFlights[availableFlightCount].no, availableFlights[availableFlightCount].flightNumber, 
-//                  availableFlights[availableFlightCount].origin, availableFlights[availableFlightCount].destination, 
-//                  availableFlights[availableFlightCount].travelDate,availableFlights[availableFlightCount].departureTime) != EOF) {
-//        availableFlightCount++;
-//    }
-//    fclose(file);
-//}
+
 void modifyBookings() {
     FILE *file = fopen(UB, "r");
     if (file == NULL) {
@@ -264,6 +233,16 @@ void modifyBookings() {
     char userBookings[MAX_BOOKINGS][256];
     int userBookingIndices[MAX_BOOKINGS];
     int userBookingCount = 0;
+    
+     while (fgets(line, sizeof(line), file)) {
+        char *trimmedLine = line;
+        while (*trimmedLine == ' ' || *trimmedLine == '\t') trimmedLine++; // Skip leading whitespace
+        if (trimmedLine[0] == '\0' || trimmedLine[0] == '\n') continue;   // Skip empty lines
+
+        strcpy(allBookings[bookingCount], line);
+        bookingCount++;
+    }
+    fclose(file);
 
     for (int i = 0; i < bookingCount; i++) {
         char username[50];
@@ -355,12 +334,12 @@ void modifyBookings() {
         printf("\nError: Could not find class or ticket information in the booking.\n");
         return;
     }
-    file = fopen(UB, "w");
+    file = fopen(UB, "w+");
     for (int i = 0; i < bookingCount; i++) {
+    	if (strlen(allBookings[i]) > 1)
         fputs(allBookings[i], file);
     }
     fclose(file);
-
     printf("\n\t\t\tBooking modified successfully!\n\n");
 }
 void cancelBooking() {
@@ -379,6 +358,7 @@ void cancelBooking() {
     char userBookings[MAX_BOOKINGS][256];
     int userBookingCount = 0;
     while (fgets(line, sizeof(line), file)) {
+    	if (strlen(line) <= 1) continue; 
         char username[50];
         char bookingDetails[200];
         sscanf(line, "%[^:]: %[^\n]", username, bookingDetails);
