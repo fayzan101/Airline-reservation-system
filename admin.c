@@ -37,7 +37,7 @@ void adminmenu() {
     printf("5. VIEW ALL BOOKINGS\n");
     printf("6. SEARCH BOOKINGS\n");
     printf("7. LOGOUT\n");
-    printf("\n\t\tENTER YOUR CHOICE(1-6): ");
+    printf("\n\t\tENTER YOUR CHOICE(1-7): ");
      if (scanf("%d", &admin_choice) != 1) {
             printf("\n\t\tINVALID INPUT! PLEASE ENTER A NUMBER BETWEEN 1 AND 7.\n");
             while (getchar() != '\n'); 
@@ -264,7 +264,7 @@ void modify_flights() {
         printf("No flight records found.\n");
         return;
     }
-    FILE *tempFile = fopen("t.txt", "a+");
+    FILE *tempFile = fopen("t.txt", "w+");
     if (tempFile == NULL) {
         printf("Error: Unable to create temporary file.\n");
         fclose(file);
@@ -302,6 +302,7 @@ void modify_flights() {
         }
                 snprintf(updatedDate, sizeof(updatedDate), "%s", newDetails);
                 snprintf(travelDate, sizeof(travelDate), "%s", updatedDate);
+    }
            else if (choice == 2) {
                 fflush(stdin);
                 printf("Enter New Departure Time (hh:mm): ");
@@ -311,7 +312,6 @@ void modify_flights() {
                 getCurrentTime(&current_hour, &current_minute);
 
                 while (!validDepartureTime(hour, minute, day, month, year, current_day, current_month, current_year)) {
-                    printf("Invalid Time. The time cannot be in the past! Please enter a valid time.\n");
                     printf("Enter Departure Time (hh:mm): ");
                     fflush(stdin);  
                     gets(newDetails);
@@ -352,7 +352,7 @@ void update_user_bookings(const char *flightNumber, const char *newDate, const c
         printf("No Bookings Available to Update.\n");
         return;
     }
-    FILE *tempFile = fopen("temp.txt", "a+");
+    FILE *tempFile = fopen("temp.txt", "w+");
     if (tempFile == NULL) {
         printf("Error: Unable to create temporary file.\n");
         fclose(file);
