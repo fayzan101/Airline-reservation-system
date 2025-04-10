@@ -12,7 +12,7 @@ int main() {
     loadusers();
     while (1) {
         if (!islogin) {
-            printf("\t\t========================== WELCOME TO FAST AIRLINE RESERVATION SYSTEM ==========================\n\n");
+    printf("\t\t========================== WELCOME TO FAST AIRLINE RESERVATION SYSTEM ==========================\n\n");
             printf("\t\t1. REGISTER\n");
             printf("\t\t2. LOGIN AS USER\n");
             printf("\t\t3. LOGIN AS ADMIN\n");
