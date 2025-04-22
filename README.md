@@ -32,7 +32,7 @@ The **Airline Reservation System** is a C-based console application designed for
 3. Open it in dev Embracadro
 4. Press F11
 
-File Structure
+###File Structure
 The project consists of the following files:
 
 Source Code Files:
