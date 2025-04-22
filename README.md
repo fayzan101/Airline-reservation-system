@@ -32,17 +32,17 @@ The **Airline Reservation System** is a C-based console application designed for
 3. Open it in dev Embracadro
 4. Press F11
 
-### File Structure
+## File Structure
 The project consists of the following files:
 
-## Source Code Files:
+### Source Code Files:
 **main.c:** The entry point of the program, managing the overall flow of the system, including the main menu and user navigation.
 **registration.c:** Handles user registration, including storing user credentials in user_info.txt.
 **admin.c:** Admin functionalities such as flight and booking management.
 **user.c:** Contains functions for user-specific actions, such as searching for flights, booking flights, and viewing booking history.
 **validation.c:** Includes input validation and checks for user actions, like ensuring valid login credentials or verifying flight availability.
 
-## Data Files:
+### Data Files:
 **flight.txt:** Contains the list of available flights and their details (flight number, origin, destination, etc.).
 **user_info.txt:** Stores user registration details (usernames, passwords, etc.).
 **user_bookings.txt:** Keeps track of users' bookings (flight number, class, number of tickets, etc.).
